@@ -59,7 +59,9 @@
       </div>
     </div>
   </div>
-<script>
+
+
+  <script>
   const uploadBtn = document.getElementById("uploadBtn");
   const fileInput = document.getElementById("fileInput");
   const imageContainer = document.getElementById("imageContainer");
@@ -69,7 +71,7 @@
   const increaseSquishBtn = document.getElementById("increaseSquish");
   const decreaseSquishBtn = document.getElementById("decreaseSquish");
 
-  let currentSquish = 1; // Start at original (1:1 ratio)
+  let currentSquish = 0.5; // Initial squish factor (50%)
 
   uploadBtn.addEventListener("click", () => {
     fileInput.click();
@@ -103,7 +105,7 @@
     ctx.drawImage(img, 0, 0, img.width, canvas.height);
 
     // Update the UI
-    const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.25);
+    const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.8); // Set quality to 80%
     uploadBtn.classList.add("hidden");
     imageContainer.classList.remove("hidden");
     squishedImage.src = squishedDataUrl;
@@ -138,7 +140,8 @@
       console.log("Service Worker registered:", registration);
     });
   }
-</script>
+  </script>
+
 
 
   
