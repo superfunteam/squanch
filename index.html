@@ -80,13 +80,13 @@
 
           // Set canvas dimensions to 62.5% of the original height
           canvas.width = img.width;
-          canvas.height = img.height * 0.625;
+          canvas.height = img.height * 0.45;
 
           // Draw the squished image
           ctx.drawImage(img, 0, 0, img.width, canvas.height);
 
           // Convert the canvas to a data URL with 25% quality
-          const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.25);
+          const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.1);
 
           // Update the UI
           uploadBtn.classList.add("hidden");
