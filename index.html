@@ -39,6 +39,14 @@
     <!-- Image Display Area -->
     <div id="imageContainer" class="hidden">
       <img id="squishedImage" class="max-w-full mx-auto rounded-lg shadow-lg my-6" />
+      <div class="flex justify-center gap-4 mb-4">
+        <button id="decreaseSquish" class="px-4 py-2 bg-[var(--tw-color-neon-purple)] text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform">
+          -
+        </button>
+        <button id="increaseSquish" class="px-4 py-2 bg-[var(--tw-color-neon-purple)] text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform">
+          +
+        </button>
+      </div>
       <div class="flex space-x-4">
         <a id="downloadLink" class="px-6 py-3 bg-[var(--tw-color-neon-purple)] w-full text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform" download="squanch-photo.jpg">
           Download Squanch
@@ -59,6 +67,10 @@
     const squishedImage = document.getElementById("squishedImage");
     const downloadLink = document.getElementById("downloadLink");
     const newSquanchBtn = document.getElementById("newSquanchBtn");
+    const increaseSquishBtn = document.getElementById("increaseSquish");
+    const decreaseSquishBtn = document.getElementById("decreaseSquish");
+
+    let currentSquish = 0.45; // Initial squish factor (45%)
 
     uploadBtn.addEventListener("click", () => {
       fileInput.click();
@@ -74,32 +86,46 @@
         img.src = e.target.result;
 
         img.onload = () => {
-          // Create a canvas for squishing
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-
-          // Set canvas dimensions to 62.5% of the original height
-          canvas.width = img.width;
-          canvas.height = img.height * 0.45;
-
-          // Draw the squished image
-          ctx.drawImage(img, 0, 0, img.width, canvas.height);
-
-          // Convert the canvas to a data URL with 25% quality
-          const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.1);
-
-          // Update the UI
-          uploadBtn.classList.add("hidden");
-          imageContainer.classList.remove("hidden");
-          squishedImage.src = squishedDataUrl;
-          downloadLink.href = squishedDataUrl;
+          squishImage(img, currentSquish);
         };
       };
       reader.readAsDataURL(file);
     });
 
+    const squishImage = (img, squishFactor) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Set canvas dimensions
+      canvas.width = img.width;
+      canvas.height = img.height * squishFactor;
+
+      // Draw the squished image
+      ctx.drawImage(img, 0, 0, img.width, canvas.height);
+
+      // Update the UI
+      const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.25);
+      uploadBtn.classList.add("hidden");
+      imageContainer.classList.remove("hidden");
+      squishedImage.src = squishedDataUrl;
+      downloadLink.href = squishedDataUrl;
+    };
+
+    increaseSquishBtn.addEventListener("click", () => {
+      currentSquish = Math.max(0.1, currentSquish - 0.05); // Decrease squish factor by 5%
+      const img = new Image();
+      img.src = squishedImage.src;
+      img.onload = () => squishImage(img, currentSquish);
+    });
+
+    decreaseSquishBtn.addEventListener("click", () => {
+      currentSquish = Math.min(1, currentSquish + 0.05); // Increase squish factor by 5%
+      const img = new Image();
+      img.src = squishedImage.src;
+      img.onload = () => squishImage(img, currentSquish);
+    });
+
     newSquanchBtn.addEventListener("click", () => {
-      // Reset to initial state
       uploadBtn.classList.remove("hidden");
       imageContainer.classList.add("hidden");
       fileInput.value = ""; // Clear the file input
