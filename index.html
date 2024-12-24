@@ -39,7 +39,9 @@
     <!-- Image Display Area -->
     <div id="imageContainer" class="hidden">
       <img id="squishedImage" class="max-w-full mx-auto rounded-lg shadow-lg my-6" />
-      <div class="flex justify-center gap-4 mb-4">
+      
+      <!-- Flex layout for +/- buttons -->
+      <div class="flex justify-between mb-4">
         <button id="decreaseSquish" class="px-4 py-2 bg-[var(--tw-color-neon-purple)] text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform">
           -
         </button>
@@ -47,6 +49,7 @@
           +
         </button>
       </div>
+
       <div class="flex space-x-4">
         <a id="downloadLink" class="px-6 py-3 bg-[var(--tw-color-neon-purple)] w-full text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform" download="squanch-photo.jpg">
           Download Squanch
@@ -60,90 +63,85 @@
     </div>
   </div>
 
-
   <script>
-  const uploadBtn = document.getElementById("uploadBtn");
-  const fileInput = document.getElementById("fileInput");
-  const imageContainer = document.getElementById("imageContainer");
-  const squishedImage = document.getElementById("squishedImage");
-  const downloadLink = document.getElementById("downloadLink");
-  const newSquanchBtn = document.getElementById("newSquanchBtn");
-  const increaseSquishBtn = document.getElementById("increaseSquish");
-  const decreaseSquishBtn = document.getElementById("decreaseSquish");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const fileInput = document.getElementById("fileInput");
+    const imageContainer = document.getElementById("imageContainer");
+    const squishedImage = document.getElementById("squishedImage");
+    const downloadLink = document.getElementById("downloadLink");
+    const newSquanchBtn = document.getElementById("newSquanchBtn");
+    const increaseSquishBtn = document.getElementById("increaseSquish");
+    const decreaseSquishBtn = document.getElementById("decreaseSquish");
 
-  let currentSquish = 0.5; // Initial squish factor (50%)
+    let currentSquish = 0.5; // Initial squish factor (50% height)
 
-  uploadBtn.addEventListener("click", () => {
-    fileInput.click();
-  });
-
-  fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.src = e.target.result;
-
-      img.onload = () => {
-        squishImage(img, currentSquish);
-      };
-    };
-    reader.readAsDataURL(file);
-  });
-
-  const squishImage = (img, squishFactor) => {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    // Set canvas dimensions
-    canvas.width = img.width;
-    canvas.height = img.height * squishFactor;
-
-    // Draw the squished image
-    ctx.drawImage(img, 0, 0, img.width, canvas.height);
-
-    // Update the UI
-    const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.8); // Set quality to 80%
-    uploadBtn.classList.add("hidden");
-    imageContainer.classList.remove("hidden");
-    squishedImage.src = squishedDataUrl;
-    downloadLink.href = squishedDataUrl;
-  };
-
-  // "+" Button: Makes the image shorter (increases squish factor)
-  increaseSquishBtn.addEventListener("click", () => {
-    currentSquish = Math.max(0.1, currentSquish - 0.05); // Reduce squish factor
-    const img = new Image();
-    img.src = squishedImage.src;
-    img.onload = () => squishImage(img, currentSquish);
-  });
-
-  // "-" Button: Makes the image taller (decreases squish factor)
-  decreaseSquishBtn.addEventListener("click", () => {
-    currentSquish += 0.05; // Increase squish factor, allowing values > 1
-    const img = new Image();
-    img.src = squishedImage.src;
-    img.onload = () => squishImage(img, currentSquish);
-  });
-
-  newSquanchBtn.addEventListener("click", () => {
-    uploadBtn.classList.remove("hidden");
-    imageContainer.classList.add("hidden");
-    fileInput.value = ""; // Clear the file input
-  });
-
-  // Service worker registration for PWA
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js").then((registration) => {
-      console.log("Service Worker registered:", registration);
+    uploadBtn.addEventListener("click", () => {
+      fileInput.click();
     });
-  }
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+
+        img.onload = () => {
+          squishImage(img, currentSquish);
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const squishImage = (img, squishFactor) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Set canvas dimensions
+      canvas.width = img.width;
+      canvas.height = img.height * squishFactor;
+
+      // Draw the squished image
+      ctx.drawImage(img, 0, 0, img.width, canvas.height);
+
+      // Update the UI
+      const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.8); // Set quality to 80%
+      uploadBtn.classList.add("hidden");
+      imageContainer.classList.remove("hidden");
+      squishedImage.src = squishedDataUrl;
+      downloadLink.href = squishedDataUrl;
+    };
+
+    // "+" Button: Makes the image shorter (more squished)
+    increaseSquishBtn.addEventListener("click", () => {
+      currentSquish = Math.max(0.1, currentSquish - 0.05); // Reduce squish factor
+      const img = new Image();
+      img.src = squishedImage.src;
+      img.onload = () => squishImage(img, currentSquish);
+    });
+
+    // "-" Button: Makes the image taller (less squished)
+    decreaseSquishBtn.addEventListener("click", () => {
+      currentSquish += 0.05; // Increase squish factor (can go above 1)
+      const img = new Image();
+      img.src = squishedImage.src;
+      img.onload = () => squishImage(img, currentSquish);
+    });
+
+    newSquanchBtn.addEventListener("click", () => {
+      uploadBtn.classList.remove("hidden");
+      imageContainer.classList.add("hidden");
+      fileInput.value = ""; // Clear the file input
+    });
+
+    // Service worker registration for PWA
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then((registration) => {
+        console.log("Service Worker registered:", registration);
+      });
+    }
   </script>
-
-
-
-  
 </body>
 </html>
