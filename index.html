@@ -60,6 +60,7 @@
     </div>
   </div>
 
+
   <script>
   const uploadBtn = document.getElementById("uploadBtn");
   const fileInput = document.getElementById("fileInput");
@@ -111,17 +112,17 @@
     downloadLink.href = squishedDataUrl;
   };
 
-  // "+" Button: Reduce the squish factor (shorter image)
+  // "+" Button: Makes the image shorter (more squished)
   increaseSquishBtn.addEventListener("click", () => {
-    currentSquish = Math.max(0.1, currentSquish - 0.05);
+    currentSquish = Math.max(0.1, currentSquish - 0.05); // Decrease squish factor
     const img = new Image();
     img.src = squishedImage.src;
     img.onload = () => squishImage(img, currentSquish);
   });
 
-  // "-" Button: Increase the squish factor (taller image)
+  // "-" Button: Makes the image taller (less squished)
   decreaseSquishBtn.addEventListener("click", () => {
-    currentSquish = Math.min(1, currentSquish + 0.05);
+    currentSquish = Math.min(1, currentSquish + 0.05); // Increase squish factor
     const img = new Image();
     img.src = squishedImage.src;
     img.onload = () => squishImage(img, currentSquish);
@@ -139,6 +140,6 @@
       console.log("Service Worker registered:", registration);
     });
   }
-  </script>
+</script>
 </body>
 </html>
