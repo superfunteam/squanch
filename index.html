@@ -124,7 +124,7 @@
 
     // "-" Button: Makes the image taller (less squished)
     decreaseSquishBtn.addEventListener("click", () => {
-      currentSquish += 0.05; // Increase squish factor (can go above 1)
+      currentSquish = Math.max(0.1, currentSquish + 0.05);// Increase squish factor (can go above 1)
       const img = new Image();
       img.src = squishedImage.src;
       img.onload = () => squishImage(img, currentSquish);
