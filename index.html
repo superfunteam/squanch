@@ -59,9 +59,7 @@
       </div>
     </div>
   </div>
-
-
-  <script>
+<script>
   const uploadBtn = document.getElementById("uploadBtn");
   const fileInput = document.getElementById("fileInput");
   const imageContainer = document.getElementById("imageContainer");
@@ -71,7 +69,7 @@
   const increaseSquishBtn = document.getElementById("increaseSquish");
   const decreaseSquishBtn = document.getElementById("decreaseSquish");
 
-  let currentSquish = 0.45; // Initial squish factor (45%)
+  let currentSquish = 1; // Start at original (1:1 ratio)
 
   uploadBtn.addEventListener("click", () => {
     fileInput.click();
@@ -112,17 +110,17 @@
     downloadLink.href = squishedDataUrl;
   };
 
-  // "+" Button: Makes the image shorter (more squished)
+  // "+" Button: Makes the image shorter (increases squish factor)
   increaseSquishBtn.addEventListener("click", () => {
-    currentSquish = Math.max(0.1, currentSquish - 0.05); // Decrease squish factor
+    currentSquish = Math.max(0.1, currentSquish - 0.05); // Reduce squish factor
     const img = new Image();
     img.src = squishedImage.src;
     img.onload = () => squishImage(img, currentSquish);
   });
 
-  // "-" Button: Makes the image taller (less squished)
+  // "-" Button: Makes the image taller (decreases squish factor)
   decreaseSquishBtn.addEventListener("click", () => {
-    currentSquish = Math.min(1, currentSquish + 0.05); // Increase squish factor
+    currentSquish += 0.05; // Increase squish factor, allowing values > 1
     const img = new Image();
     img.src = squishedImage.src;
     img.onload = () => squishImage(img, currentSquish);
@@ -141,5 +139,8 @@
     });
   }
 </script>
+
+
+  
 </body>
 </html>
