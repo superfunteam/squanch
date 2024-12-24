@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squanch App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --tw-color-dark-purple: #2c003e;
+      --tw-color-neon-purple: #d500f9;
+    }
+  </style>
+</head>
+<body class="bg-[var(--tw-color-dark-purple)] text-white flex items-center justify-center min-h-screen p-4">
+
+  <div id="app" class="text-center">
+    <!-- Initial Button -->
+    <button id="uploadBtn" class="px-6 py-3 bg-[var(--tw-color-neon-purple)] text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform mb-6">
+      Pick a Photo
+    </button>
+
+    <!-- Hidden Image Input -->
+    <input id="fileInput" type="file" accept="image/*" class="hidden">
+
+    <!-- Image Display Area -->
+    <div id="imageContainer" class="hidden">
+      <img id="squishedImage" class="max-w-full mx-auto rounded-lg shadow-lg my-6" />
+      <div class="flex space-x-4">
+        <a id="downloadLink" class="px-6 py-3 bg-[var(--tw-color-neon-purple)] w-full text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform" download="squanch-photo.jpg">
+          Download Squanch
+        </a>
+        <button id="newSquanchBtn" class="px-6 py-3 bg-[var(--tw-color-neon-purple)] text-[var(--tw-color-dark-purple)] font-bold rounded-lg hover:scale-105 transition transform">
+          New
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const uploadBtn = document.getElementById("uploadBtn");
+    const fileInput = document.getElementById("fileInput");
+    const imageContainer = document.getElementById("imageContainer");
+    const squishedImage = document.getElementById("squishedImage");
+    const downloadLink = document.getElementById("downloadLink");
+    const newSquanchBtn = document.getElementById("newSquanchBtn");
+
+    uploadBtn.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.src = e.target.result;
+
+        img.onload = () => {
+          // Create a canvas for squishing
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          // Set canvas dimensions to 62.5% of the original height
+          canvas.width = img.width;
+          canvas.height = img.height * 0.5;
+
+          // Draw the squished image
+          ctx.drawImage(img, 0, 0, img.width, canvas.height);
+
+          // Convert the canvas to a data URL with 25% quality
+          const squishedDataUrl = canvas.toDataURL("image/jpeg", 0.1);
+
+          // Update the UI
+          uploadBtn.classList.add("hidden");
+          imageContainer.classList.remove("hidden");
+          squishedImage.src = squishedDataUrl;
+          downloadLink.href = squishedDataUrl;
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    newSquanchBtn.addEventListener("click", () => {
+      // Reset to initial state
+      uploadBtn.classList.remove("hidden");
+      imageContainer.classList.add("hidden");
+      fileInput.value = ""; // Clear the file input
+    });
+  </script>
+</body>
+</html>
